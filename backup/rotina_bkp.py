@@ -2,6 +2,7 @@ import datetime
 import shutil
 import os
 
+
 def rotina_bkp():
     while True:
         data_hora = input(
@@ -33,6 +34,7 @@ def rotina_bkp():
             )
         except shutil.Error as e:
             print(f"Falha ao realizar o backup. Erro: {e}. Por favor, tente novamente.")
+
 
 data_hora_inicio_backup = rotina_bkp()
 print("Data e hora de início do backup:", data_hora_inicio_backup)
