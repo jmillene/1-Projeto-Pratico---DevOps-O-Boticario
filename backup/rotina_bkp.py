@@ -1,21 +1,40 @@
 import datetime
 import shutil
+import schedule
+import time
 import os
 
 
-def rotina_bkp():
-    while True:
-        data_hora = input(
-            "Por favor, insira a data e hora de início do backup (formato: AAAA-MM-DD HH:MM): "
-        )
-        diretorio_atual = input("Informe o diretório que deseja realizar o backup: ")
-        diretorio_destino = input(
-            "Informe o diretório que deseja salvar o arquivo de backup: "
-        )
+def job():
+    print("Backup realizado em:", datetime.datetime.now())
 
+
+def entrada_usuario():
+    while True:
+        dia_backup = input("Informe a data para a realização do backup (DD/MM/YYYY): ")
+        hora_backup = input("Informe a hora para a realização do backup (HH:MM): ")
+        return dia_backup, hora_backup
+
+
+def configurar_backup(dia_backup, hora_backup):
+
+    horario_scheduled = f"{dia_backup} {hora_backup}"
+    schedule.every().day.at(horario_scheduled).do(job)
+
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+
+def realizar_backup():
+    while True:
         try:
-            # Convertendo a string de entrada em um objeto datetime
-            data_hora_inicio = datetime.datetime.strptime(data_hora, "%Y-%m-%d %H:%M")
+            diretorio_atual = input(
+                "Informe o diretório que deseja realizar o backup: "
+            )
+            diretorio_destino = input(
+                "Informe o diretório que deseja salvar o arquivo de backup: "
+            )
 
             # Verifica se o diretório de destino já existe
             if os.path.exists(diretorio_destino):
@@ -26,15 +45,21 @@ def rotina_bkp():
             backup = shutil.copytree(diretorio_atual, diretorio_destino)
             if backup:
                 print(f"Backup realizado com sucesso para: {diretorio_destino}")
-            return data_hora_inicio
+                break
 
         except ValueError:
             print(
-                "Formato inválido. Certifique-se de inserir a data e hora no formato correto (AAAA-MM-DD HH:MM)."
+                "Formato inválido. Certifique-se de inserir a data e hora no formato correto (DD/MM/YYYY HH:MM)."
             )
         except shutil.Error as e:
             print(f"Falha ao realizar o backup. Erro: {e}. Por favor, tente novamente.")
 
 
-data_hora_inicio_backup = rotina_bkp()
-print("Data e hora de início do backup:", data_hora_inicio_backup)
+def main():
+    print("Bem-vindo! Por favor, informe a data e a hora para a realização do backup:")
+    dia_backup, hora_backup = entrada_usuario()
+    configurar_backup(dia_backup, hora_backup)
+
+
+if __name__ == "__main__":
+    main()
