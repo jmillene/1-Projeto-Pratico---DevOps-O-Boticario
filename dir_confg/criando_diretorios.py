@@ -1,7 +1,5 @@
 import datetime
 import shutil
-import schedule
-import time
 import os
 
 
@@ -36,7 +34,3 @@ def job():
             )
         except shutil.Error as e:
             print(f"Falha ao realizar o backup. Erro: {e}. Por favor, tente novamente.")
-
-
-data_hora_inicio_backup = job()
-print("Data e hora de início do backup:", data_hora_inicio_backup)

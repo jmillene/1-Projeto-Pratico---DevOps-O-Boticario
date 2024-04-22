@@ -31,7 +31,3 @@ def enviar_backup_por_email():
         smtp.starttls()
         smtp.login(email_usuario, senha_usuario)
         smtp.send_message(msg)
-
-
-if __name__ == "__main__":
-    enviar_backup_por_email()
