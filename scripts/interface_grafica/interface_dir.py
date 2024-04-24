@@ -20,3 +20,5 @@ root.withdraw()  # Esconder a janela principal
 diretorio_raiz = tk.StringVar()
 diretorio_destino = tk.StringVar()
 
+
+

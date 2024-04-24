@@ -1,2 +1,2 @@
-environment
-check_and_fix_apt.sh
+myenv
+scripts/user/cliente_secret.json

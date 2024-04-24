@@ -1,8 +1,6 @@
 import shutil
 import os
-from interface_grafica.dir_interface import selecionar_diretorio_raiz
-from interface_grafica.dir_interface import selecionar_diretorio_destino
-
+from interface_grafica.interface_dir import selecionar_diretorio_destino, selecionar_diretorio_raiz
 
 def diretorio_backup():
     while True:
@@ -26,4 +24,6 @@ def diretorio_backup():
         except shutil.Error as e:
             print(f"Falha ao realizar o backup. Erro: {e}. Por favor, tente novamente.")
         return None
-    
+
+if __name__ == "__main__":
+    diretorio_backup()
