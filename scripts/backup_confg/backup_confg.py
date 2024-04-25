@@ -6,6 +6,7 @@ import zipfile
 from entrada_usuario_email_senha import interface_email
 from programando_bkp import solicitar_data_hora_backup
 
+
 # Função para selecionar diretório de origem
 def selecionar_diretorio_origem():
     diretorio = filedialog.askdirectory(
@@ -14,6 +15,7 @@ def selecionar_diretorio_origem():
     if diretorio:
         diretorio_raiz.set(diretorio)
         selecionar_diretorio_destino()  # Após selecionar a origem, chama a função para selecionar o destino
+
 
 # Função para selecionar diretório de destino
 def selecionar_diretorio_destino():
@@ -24,8 +26,11 @@ def selecionar_diretorio_destino():
         diretorio_destino.set(diretorio)
         realizar_backup(diretorio)  # Passando o diretório de destino como argumento
 
+
 # Função para realizar o backup dos arquivos para o diretório de destino
-def realizar_backup(diretorio_destino):  # Adicionando o diretório de destino como argumento
+def realizar_backup(
+    diretorio_destino,
+):  # Adicionando o diretório de destino como argumento
     try:
         diretorio_origem = diretorio_raiz.get()
 
@@ -44,7 +49,7 @@ def realizar_backup(diretorio_destino):  # Adicionando o diretório de destino c
             else:
                 messagebox.showinfo(
                     "Info",
-                    f"O backup não será realizado. Diretório de destino existente: '{diretorio_destino}'"
+                    f"O backup não será realizado. Diretório de destino existente: '{diretorio_destino}'",
                 )
                 return
 
@@ -66,7 +71,9 @@ def realizar_backup(diretorio_destino):  # Adicionando o diretório de destino c
                     input("Deseja enviar o backup por e-mail? (S/N): ").strip().lower()
                 )
                 if pergunta == "s":
-                    interface_email(arquivo_anexo=None)
+                    interface_email(
+                        arquivo_anexo=nome_arquivo_zip
+                    )  # Passando o arquivo zipado como anexo
                     break
                 elif pergunta == "n":
                     break
@@ -76,6 +83,7 @@ def realizar_backup(diretorio_destino):  # Adicionando o diretório de destino c
         with open("error.log", "w") as f:
             f.write(f"Falha ao realizar o backup: {e}")
         messagebox.showerror("Erro", f"Falha ao realizar o backup: {e}")
+
 
 # Função para zipar a pasta de backup
 def zipar_pasta(diretorio_destino):
@@ -89,11 +97,13 @@ def zipar_pasta(diretorio_destino):
                         os.path.relpath(os.path.join(root, file), diretorio_destino),
                     )
         return nome_arquivo_zip
+
     except Exception as e:
         with open("error.log", "w") as f:
             f.write(f"Erro ao zipar a pasta de backup: {e}")
         messagebox.showerror("Erro", f"Erro ao zipar a pasta de backup: {e}")
         return None
+
 
 # Inicialização do Tkinter
 root = tk.Tk()
@@ -104,5 +114,5 @@ diretorio_raiz = tk.StringVar()
 diretorio_destino = tk.StringVar()
 
 if __name__ == "__main__":
-    solicitar_data_hora_backup()  # Solicita a data e hora antes de selecionar o diretório de origem
+    solicitar_data_hora_backup()
     selecionar_diretorio_origem()

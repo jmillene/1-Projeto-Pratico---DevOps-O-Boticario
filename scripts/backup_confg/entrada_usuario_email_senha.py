@@ -11,21 +11,21 @@ import os
 
 def enviar_email(email, senha, destinatario, arquivo_anexo):
     try:
-        with smtplib.SMTP("gmail-smtp-in.l.google.com", 25) as server:
-            server.ehlo("gmail.com")
+        with smtplib.SMTP(
+            "smtp.gmail.com", 587
+        ) as server:  # Alterado para o servidor do Gmail
             server.starttls()
             server.login(email, senha)
             message = MIMEMultipart()
             message["From"] = email
             message["To"] = destinatario
-            message["Subject"] = "SMTP Email Test"
-            server.send_message(message)
-            
+            message["Subject"] = "Assunto do E-mail"
+
             # Corpo do e-mail
             msg = MIMEText("Segue em anexo o backup.")
             message.attach(msg)
 
-            # Anexo
+            # Anexo (arquivo zipado)
             with open(arquivo_anexo, "rb") as attachment:
                 part = MIMEApplication(
                     attachment.read(), Name=os.path.basename(arquivo_anexo)
@@ -34,6 +34,8 @@ def enviar_email(email, senha, destinatario, arquivo_anexo):
                 f'attachment; filename="{os.path.basename(arquivo_anexo)}"'
             )
             message.attach(part)
+
+            server.send_message(message)
             print("Email enviado com sucesso!")
     except Exception as e:
         with open("error.log", "w") as f:
@@ -44,9 +46,10 @@ def enviar_email(email, senha, destinatario, arquivo_anexo):
         )
 
 
-def autenticar_email(entry_email, entry_senha, root, destinatario):
+def autenticar_email(entry_email, entry_senha, root, entry_destinatario):
     email = entry_email.get()
     senha = entry_senha.get()
+    destinatario = entry_destinatario.get()
 
     try:
         # Configurar o fluxo de autenticação do Google
@@ -83,43 +86,16 @@ def abrir_janela_envio_email(email, senha, root):
     frame = tk.Frame(janela_envio_email)
     frame.pack(padx=20, pady=20)
 
-    destinatario = tk.StringVar()  # Definindo a variável destinatario
-    assunto = tk.StringVar()
-
     tk.Label(frame, text="E-mail destinatário:").grid(row=0, column=0, sticky="w")
-    entry_destinatario = tk.Entry(frame, textvariable=destinatario)
+    entry_destinatario = tk.Entry(frame)
     entry_destinatario.grid(row=0, column=1, padx=10, pady=5)
-
-    tk.Label(frame, text="Assunto:").grid(row=1, column=0, sticky="w")
-    entry_assunto = tk.Entry(frame, textvariable=assunto)
-    entry_assunto.grid(row=1, column=1, padx=10, pady=5)
-
-    tk.Label(frame, text="Mensagem:").grid(row=2, column=0, sticky="w")
-    entry_mensagem = tk.Text(frame, height=5, width=30)
-    entry_mensagem.grid(row=2, column=1, padx=10, pady=5)
 
     btn_enviar = tk.Button(
         janela_envio_email,
         text="Enviar",
-        command=lambda: enviar_email(
-            email, senha, entry_destinatario.get(), None
-        ),  # Removido o argumento 'root'
+        command=lambda: enviar_email(email, senha, entry_destinatario.get(), None),
     )
     btn_enviar.pack(pady=10)
-
-    btn_copiar_erro = tk.Button(
-        janela_envio_email,
-        text="Copiar Erro",
-        command=lambda: copiar_erro(entry_mensagem),
-    )
-    btn_copiar_erro.pack(pady=5)
-
-    btn_copiar_erro = tk.Button(
-        janela_envio_email,
-        text="Copiar Erro",
-        command=lambda: copiar_erro(entry_mensagem),
-    )
-    btn_copiar_erro.pack(pady=5)
 
 
 def copiar_erro(entry_mensagem):
@@ -132,37 +108,25 @@ def copiar_erro(entry_mensagem):
         )
 
 
-def interface_email(arquivo_anexo):
+def interface_email():
     root = tk.Tk()
     root.title("Autenticação de E-mail")
 
     frame = tk.Frame(root)
     frame.pack(padx=20, pady=20)
 
-    email = tk.StringVar()
-    senha = tk.StringVar()
-    destinatario = tk.StringVar()  # Adicionei a variável para o destinatário
-
     tk.Label(frame, text="E-mail:").grid(row=0, column=0, sticky="w")
-    entry_email = tk.Entry(frame, textvariable=email)
+    entry_email = tk.Entry(frame)
     entry_email.grid(row=0, column=1, padx=10, pady=5)
 
     tk.Label(frame, text="Senha:").grid(row=1, column=0, sticky="w")
-    entry_senha = tk.Entry(frame, textvariable=senha, show="*")
+    entry_senha = tk.Entry(frame, show="*")
     entry_senha.grid(row=1, column=1, padx=10, pady=5)
-
-    tk.Label(frame, text="Destinatário:").grid(
-        row=2, column=0, sticky="w"
-    )  # Adicionei um rótulo para o destinatário
-    entry_destinatario = tk.Entry(frame, textvariable=destinatario)
-    entry_destinatario.grid(row=2, column=1, padx=10, pady=5)
 
     btn_autenticar = tk.Button(
         root,
         text="Autenticar",
-        command=lambda: autenticar_email(
-            entry_email, entry_senha, root, entry_destinatario.get()
-        ),  # Passei o destinatário como argumento
+        command=lambda: autenticar_email(entry_email, entry_senha, root),
     )
     btn_autenticar.pack(pady=10)
 
@@ -170,5 +134,4 @@ def interface_email(arquivo_anexo):
 
 
 if __name__ == "__main__":
-    interface_email(arquivo_anexo=None)
-
+    interface_email()
