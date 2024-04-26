@@ -1,2 +1,5 @@
 myenv
-scripts/user/cliente_secret.json
+cliente_secret.json
+scripts/backup_confg/__pycache__
+error.log
+.vscode
