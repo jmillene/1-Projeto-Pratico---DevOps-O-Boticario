@@ -12,9 +12,7 @@ Desafio: Crie um conjunto de scripts Python que automatizem tarefas comuns em um
 
 ### Funcionalidades
 
-- Funcionalidade 1
-- Funcionalidade 2
-- ...
+Em construção...
 
 ### Documentação
 
